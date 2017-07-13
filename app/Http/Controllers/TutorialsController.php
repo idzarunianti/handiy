@@ -73,11 +73,29 @@ class TutorialsController extends Controller
             'title'=>'max:255',
             'tutorial'=>'max:1000 ',
             'category_id'=>'required',
+            'photo.*'=>'url',
         ]);
-        $tutorial = $request->all();
+        $tutorial = $request->except(['photo']);
         $tutorial['updated_at'] = Carbon::now();
         
         \DB::table('tutorials')->where('id',$id)->update($tutorial);
+
+        $photo = $request->get('photo');
+         if(count($photo)>0){
+          \DB::table('photo_tutorials')->where('tutorial_id', $id)->delete();
+          foreach ($photo as $item) {
+              $dataPhoto = [
+                  'tutorial_id' => $id,
+                  'photo' => $item,
+                  'created_at' => Carbon::now(),
+                  'updated_at'=>Carbon::now(),
+              ];
+              $photoId =\DB::table('photo_tutorials')->insertGetId($dataPhoto);
+              $dataPhoto['id']=$photoId;
+
+              $tutorial['photo'][] = $dataPhoto;
+          }
+      }
 
         return response()->json($tutorial);  
    }
