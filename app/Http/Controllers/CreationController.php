@@ -64,11 +64,29 @@ class CreationController extends Controller
         $this->validate($request,[
             'username'=>'required',
             'tutorial_id'=>'required'
+            'photo.*'=>'url'
         ]);
-        $creations = $request->all();
+        $creations = $request->except('photo');
         $creations['updated_at'] = Carbon::now();
         
         \DB::table('creations')->where('creation_id',$creation_id)->update($creations);
+
+        $photo = $request->get('photo');
+         if(count($photo)>0){
+          \DB::table('photo_creations')->where('creation_id', $creation_id)->delete();
+          foreach ($photo as $item) {
+              $dataPhoto = [
+                  'creation_id' => $creation_id,
+                  'photo' => $item,
+                  'created_at' => Carbon::now(),
+                  'updated_at'=>Carbon::now(),
+              ];
+              $photoId =\DB::table('photo_creations')->insertGetId($dataPhoto);
+              $dataPhoto['id']=$photoId;
+
+              $creations['photo'][] = $dataPhoto;
+          }
+      }
 
         return response()->json($creations);  
    }
