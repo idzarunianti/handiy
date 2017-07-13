@@ -14,6 +14,15 @@
 $factory->define(App\User::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->name,
-        'email' => $faker->email,
+        'password' => \Illuminate\Support\Facades\Crypt::encrypt('test'),
+        'username' => $faker->userName
+    ];
+});
+
+$factory->define(App\User::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->name,
+        'password' => \Illuminate\Support\Facades\Crypt::encrypt('test'),
+        'username' => $faker->userName
     ];
 });

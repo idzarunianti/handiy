@@ -16,7 +16,6 @@ class CreateCreationsTable extends Migration
         Schema::create('creations', function (Blueprint $table) {
             $table->increments('creation_id');
             $table->string('kreasi');
-            $table->string('photo_url');
             $table->string('username');
             $table->integer('tutorial_id')->unsigned();
             $table->timestamps();

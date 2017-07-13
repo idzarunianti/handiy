@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTutorialsTable extends Migration
+class CreatePhotoCreationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,13 @@ class CreateTutorialsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tutorials', function (Blueprint $table) {
+        Schema::create('photo_creations', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title');
-            $table->text('tutorial');
-            $table->integer('category_id')->unsigned();
+            $table->integer('creation_id')->unsigned();
+            $table->string('photo');
             $table->timestamps();
 
-            $table->foreign('category_id')->references('category_id')->on('categories');
+            $table->foreign('creation_id')->references('creation_id')->on('creations')->onDelete('cascade');
         });
     }
 
@@ -31,6 +30,6 @@ class CreateTutorialsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tutorials');
+        Schema::dropIfExists('photo_creations');
     }
 }

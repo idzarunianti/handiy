@@ -17,14 +17,13 @@ class CreationController extends Controller
         //
     }
 
-    public function store(Request $request){
+    public function store(Request $request, $username){
         $this->validate($request,[
-            'photo_url'=>'required',
+            'photo.*'=>'required|url',
             'username'=>'required',
             'tutorial_id'=>'required'
         ]);
         $creations = [
-            'photo_url'=>$request->get('photo_url'),
             'username'=>$request->get('username'),
             'tutorial_id'=>$request->get('tutorial_id'),
             'created_at'=>Carbon::now(),
@@ -34,20 +33,35 @@ class CreationController extends Controller
         $creation_id = \DB::table('creations')->insertGetId($creations);
         $creations['creation_id'] = $creation_id;
 
+        $photo = $request->get('photo');
+        if(count($photo)>0){
+          foreach ($photo as $item) {
+              $dataPhoto = [
+                  'creation_id' => $creation_id,
+                  'photo' => $item,
+                  'created_at' => Carbon::now(),
+                  'updated_at'=>Carbon::now(),
+              ];
+              $photoId =\DB::table('photo_creations')->insertGetId($dataPhoto);
+              $dataPhoto['id']=$photoId;
+
+              $creations['photo'][] = $dataPhoto;
+          }
+      }
+
         return response()->json($creations);
     }
 
-    public function index()
+    public function index($username)
    {
         $creations = \DB::table('creations')->paginate(10);
 
         return response()->json($creations);
    }
 
-   public function update(Request $request, $creation_id)
+   public function update(Request $request, $username, $creation_id)
    {
         $this->validate($request,[
-            'photo_url'=>'required',
             'username'=>'required',
             'tutorial_id'=>'required'
         ]);
@@ -59,7 +73,7 @@ class CreationController extends Controller
         return response()->json($creations);  
    }
 
-   public function destroy($creation_id)
+   public function destroy($username, $creation_id)
    {
         \DB::table('creations')->where('creation_id',$creation_id)->delete();
 

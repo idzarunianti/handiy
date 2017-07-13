@@ -17,7 +17,7 @@ class BookmarkController extends Controller
         //
     }
 
-    public function store(Request $request){
+    public function store(Request $request, $username){
         $this->validate($request,[
             'tutorials_id'=>'required',
             'username'=>'required',
@@ -35,14 +35,14 @@ class BookmarkController extends Controller
         return response()->json($bookmarks);
     }
 
-    public function index()
+    public function index($username)
    {
         $bookmarks = \DB::table('bookmarks')->paginate(10);
 
         return response()->json($bookmarks);
    }
 
-   public function update(Request $request, $bookmarks_id)
+   public function update(Request $request, $username, $bookmarks_id)
    {
         $this->validate($request,[
             'tutorials_id'=>'required',
@@ -56,7 +56,7 @@ class BookmarkController extends Controller
         return response()->json($bookmarks);  
    }
 
-   public function destroy($bookmarks_id)
+   public function destroy($username, $bookmarks_id)
    {
         \DB::table('bookmarks')->where('bookmarks_id',$bookmarks_id)->delete();
 
