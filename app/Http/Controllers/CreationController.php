@@ -63,7 +63,7 @@ class CreationController extends Controller
    {
         $this->validate($request,[
             'username'=>'required',
-            'tutorial_id'=>'required'
+            'tutorial_id'=>'required',
             'photo.*'=>'url'
         ]);
         $creations = $request->except('photo');
