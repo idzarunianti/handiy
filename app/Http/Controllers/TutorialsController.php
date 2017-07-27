@@ -21,7 +21,7 @@ class TutorialsController extends Controller
    {
         $this->validate($request,[
             'title'=>'required|max:255',
-            'tutorial.*'=>'required|max:1000',
+            'tutorial.*'=>'max:1000',
             'photo.*'=>'url',
             'category_id'=>'required',
         ]);
@@ -37,11 +37,11 @@ class TutorialsController extends Controller
         $photo = $request->get('photo');
         if(count($photo)>0){
           foreach ($photo as $key => $item) {
-            $tutorial = $request->get('tutorial');
+            $tutorials = $request->get('tutorial');
               $dataPhoto = [
                   'tutorial_id' => $id,
                   'photo' => $item,
-                  'tutorial' => $tutorial[$key],
+                  'tutorial' => $tutorials[$key],
                   'created_at' => Carbon::now(),
                   'updated_at'=>Carbon::now(),
               ];
