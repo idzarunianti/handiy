@@ -21,13 +21,12 @@ class TutorialsController extends Controller
    {
         $this->validate($request,[
             'title'=>'required|max:255',
-            'tutorial'=>'required|max:1000 ',
+            'tutorial.*'=>'required|max:1000',
             'photo.*'=>'url',
             'category_id'=>'required',
         ]);
         $tutorial = [
             'title'=>$request->get('title'),
-            'tutorial'=>$request->get('tutorial'),
             'category_id'=>$request->get('category_id'),
             'created_at'=>Carbon::now(),
             'updated_at'=>Carbon::now(),
@@ -37,16 +36,17 @@ class TutorialsController extends Controller
 
         $photo = $request->get('photo');
         if(count($photo)>0){
-          foreach ($photo as $item) {
+          foreach ($photo as $key => $item) {
+            $tutorial = $request->get('tutorial');
               $dataPhoto = [
                   'tutorial_id' => $id,
                   'photo' => $item,
+                  'tutorial' => $tutorial[$key],
                   'created_at' => Carbon::now(),
                   'updated_at'=>Carbon::now(),
               ];
               $photoId =\DB::table('photo_tutorials')->insertGetId($dataPhoto);
               $dataPhoto['id']=$photoId;
-
               $tutorial['photo'][] = $dataPhoto;
           }
       }
@@ -71,31 +71,12 @@ class TutorialsController extends Controller
    {
         $this->validate($request,[
             'title'=>'max:255',
-            'tutorial'=>'max:1000 ',
             'category_id'=>'required',
-            'photo.*'=>'url',
         ]);
-        $tutorial = $request->except(['photo']);
+        $tutorial = $request->all();
         $tutorial['updated_at'] = Carbon::now();
         
         \DB::table('tutorials')->where('id',$id)->update($tutorial);
-
-        $photo = $request->get('photo');
-         if(count($photo)>0){
-          \DB::table('photo_tutorials')->where('tutorial_id', $id)->delete();
-          foreach ($photo as $item) {
-              $dataPhoto = [
-                  'tutorial_id' => $id,
-                  'photo' => $item,
-                  'created_at' => Carbon::now(),
-                  'updated_at'=>Carbon::now(),
-              ];
-              $photoId =\DB::table('photo_tutorials')->insertGetId($dataPhoto);
-              $dataPhoto['id']=$photoId;
-
-              $tutorial['photo'][] = $dataPhoto;
-          }
-      }
 
         return response()->json($tutorial);  
    }

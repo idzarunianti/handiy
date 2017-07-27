@@ -17,6 +17,7 @@ class CreatePhotoTutorialsTable extends Migration
             $table->increments('id');
             $table->integer('tutorial_id')->unsigned();
             $table->string('photo');
+            $table->text('tutorial');
             $table->timestamps();
 
             $table->foreign('tutorial_id')->references('id')->on('tutorials')->onDelete('cascade');

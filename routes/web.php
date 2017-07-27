@@ -30,6 +30,9 @@ $app->get('categories','CategoryController@index');
 $app->put('categories/{category_id}','CategoryController@update');
 $app->delete('categories/{category_id}','CategoryController@destroy');
 
+$app->get('photo_tutorials/{tutorial_id}','PhotoTutorialsController@index');
+$app->put('photo_tutorials/{photo_tutorial_id}','PhotoTutorialsController@update');
+
 $app->group(['prefix' => '{username}'], function () use ($app) {
 	$app->post('bookmarks','BookmarkController@store');
 	$app->get('bookmarks','BookmarkController@index');
