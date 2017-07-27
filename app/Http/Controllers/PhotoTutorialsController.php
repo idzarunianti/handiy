@@ -20,8 +20,6 @@ class PhotoTutorialsController extends Controller
     public function index(Request $request, $id){
         $detail_tutorials=\DB::table('photo_tutorials')->where('tutorial_id',$id)->get();
 
-        $detail_tutorials = $detail_tutorials->paginate(10);
-
         return response()->json($detail_tutorials);
 
     }
