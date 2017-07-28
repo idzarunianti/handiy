@@ -16,7 +16,7 @@ class CreatePhotoTutorialsTable extends Migration
         Schema::create('photo_tutorials', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('tutorial_id')->unsigned();
-            $table->string('photo');
+            $table->string('photo')->nullable();
             $table->text('tutorial');
             $table->timestamps();
 

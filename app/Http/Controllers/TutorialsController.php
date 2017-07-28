@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\PhotoTutorial;
+use App\Tutorial;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -17,74 +19,68 @@ class TutorialsController extends Controller
         //
     }
 
-   public function store(Request $request)
-   {
-        $this->validate($request,[
-            'title'=>'required|max:255',
-            'tutorial.*'=>'max:1000',
-            'photo.*'=>'url',
-            'category_id'=>'required',
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'title' => 'required|max:255',
+            'tutorial.*' => 'required|max:1000',
+            'photo.*' => 'url',
+            'category_id' => 'required',
         ]);
-        $tutorial = [
-            'title'=>$request->get('title'),
-            'category_id'=>$request->get('category_id'),
-            'created_at'=>Carbon::now(),
-            'updated_at'=>Carbon::now(),
-        ];
-        $id = \DB::table('tutorials')->insertGetId($tutorial);
-        $tutorial['id'] = $id;
 
-        $photo = $request->get('photo');
-        if(count($photo)>0){
-          foreach ($photo as $key => $item) {
-            $tutorials = $request->get('tutorial');
-              $dataPhoto = [
-                  'tutorial_id' => $id,
-                  'photo' => $item,
-                  'tutorial' => $tutorials[$key],
-                  'created_at' => Carbon::now(),
-                  'updated_at'=>Carbon::now(),
-              ];
-              $photoId =\DB::table('photo_tutorials')->insertGetId($dataPhoto);
-              $dataPhoto['id']=$photoId;
-              $tutorial['photo'][] = $dataPhoto;
-          }
-      }
+        $tutorial = Tutorial::create([
+            'title' => $request->get('title'),
+            'category_id' => $request->get('category_id'),
+        ]);
 
-        return response()->json($tutorial);
-   }
 
-   public function index(Request $request)
-   {
-        $tutorial = \DB::table('tutorials')
-                        ->join('photo_tutorials', 'tutorials.id', '=', 'photo_tutorials.tutorial_id')
-                        ->get();
-
-        if ($request->has('category_id')) {
-          $tutorial = $tutorial->where('category_id', $request->get('category_id'));
+        foreach ($request->get('tutorial') as $key => $step) {
+            $data = [
+                'tutorial' => $step,
+            ];
+            if (isset($request->get('photo')[$key])) {
+                $data['photo'] = $request->get('photo')[$key];
+            } else {
+                $data['photo'] = null;
+            }
+            $tutorial->steps()->create($data);
         }
 
+        $tutorial = $tutorial->fresh('steps');
+
         return response()->json($tutorial);
-   }
+    }
 
-   public function update(Request $request, $id)
-   {
-        $this->validate($request,[
-            'title'=>'max:255',
-            'category_id'=>'required',
+    public function index(Request $request)
+    {
+        $tutorials = Tutorial::with('steps');
+
+        if ($request->has('category_id')) {
+            $tutorials = $tutorials->where('category_id', $request->get('category_id'));
+        }
+
+        $tutorials = $tutorials->paginate(10);
+
+        return response()->json($tutorials);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $this->validate($request, [
+            'title' => 'max:255',
+            'category_id' => 'required|exists:categories,category_id',
         ]);
-        $tutorial = $request->all();
-        $tutorial['updated_at'] = Carbon::now();
-        
-        \DB::table('tutorials')->where('id',$id)->update($tutorial);
+        $tutorial = Tutorial::find($id);
+        $tutorial->update($request->only(['title', 'category_id']));
+        $tutorial = $tutorial->fresh();
 
-        return response()->json($tutorial);  
-   }
+        return response()->json($tutorial);
+    }
 
-   public function destroy($id)
-   {
-        \DB::table('tutorials')->where('id',$id)->delete();
+    public function destroy($id)
+    {
+        Tutorial::find($id)->delete();
 
         return response()->json(['success']);
-   }
+    }
 }
