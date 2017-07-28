@@ -8,10 +8,10 @@ class Bookmark extends Model
 {
     protected $primaryKey = 'bookmarks_id';
 
-    protected $fillable = ['username', 'tutorials_id'];
+    protected $fillable = ['username', 'tutorial_id'];
 
     public function tutorial()
     {
-        return $this->belongsTo(Tutorial::class, 'tutorials_id');
+        return $this->belongsTo(Tutorial::class);
     }
 }

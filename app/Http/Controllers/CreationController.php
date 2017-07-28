@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Creation;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -17,87 +18,49 @@ class CreationController extends Controller
         //
     }
 
-    public function store(Request $request, $username){
-        $this->validate($request,[
-            'photo.*'=>'required|url',
-            'username'=>'required',
-            'kreasi'=>'required',
-            'tutorial_id'=>'required'
+    public function store(Request $request, $username)
+    {
+        $this->validate($request, [
+            'photo' => 'required|url',
+            'kreasi' => 'required',
+            'tutorial_id' => 'required'
         ]);
-        $creations = [
-            'kreasi'=>$request->get('kreasi'),
-            'username'=>$request->get('username'),
-            'tutorial_id'=>$request->get('tutorial_id'),
-            'created_at'=>Carbon::now(),
-            'updated_at'=>Carbon::now(),
+        $data = [
+            'kreasi' => $request->get('kreasi'),
+            'username' => $username,
+            'photo' => $request->get('photo'),
+            'tutorial_id' => $request->get('tutorial_id')
         ];
 
-        $creation_id = \DB::table('creations')->insertGetId($creations);
-        $creations['creation_id'] = $creation_id;
-
-        $photo = $request->get('photo');
-        if(count($photo)>0){
-          foreach ($photo as $item) {
-              $dataPhoto = [
-                  'creation_id' => $creation_id,
-                  'photo' => $item,
-                  'created_at' => Carbon::now(),
-                  'updated_at'=>Carbon::now(),
-              ];
-              $photoId =\DB::table('photo_creations')->insertGetId($dataPhoto);
-              $dataPhoto['id']=$photoId;
-
-              $creations['photo'][] = $dataPhoto;
-          }
-      }
-
+        $creations = Creation::create($data);
         return response()->json($creations);
     }
 
     public function index($username)
-   {
-        $creations = \DB::table('creations')->paginate(10);
+    {
+        $creations = Creation::with('tutorial.steps')->where('username',$username)->paginate(10);
 
         return response()->json($creations);
-   }
+    }
 
-   public function update(Request $request, $username, $creation_id)
-   {
-        $this->validate($request,[
-            'username'=>'required',
-            'tutorial_id'=>'required',
-            'kreasi'=>'required',
-            'photo.*'=>'url'
+    public function update(Request $request, $username, $creation_id)
+    {
+        $this->validate($request, [
+            'kreasi' => 'required',
+            'photo' => 'required|url'
         ]);
-        $creations = $request->except('photo');
-        $creations['updated_at'] = Carbon::now();
-        
-        \DB::table('creations')->where('creation_id',$creation_id)->update($creations);
 
-        $photo = $request->get('photo');
-         if(count($photo)>0){
-          \DB::table('photo_creations')->where('creation_id', $creation_id)->delete();
-          foreach ($photo as $item) {
-              $dataPhoto = [
-                  'creation_id' => $creation_id,
-                  'photo' => $item,
-                  'created_at' => Carbon::now(),
-                  'updated_at'=>Carbon::now(),
-              ];
-              $photoId =\DB::table('photo_creations')->insertGetId($dataPhoto);
-              $dataPhoto['id']=$photoId;
+        $creations = Creation::find($creation_id);
+        $creations->update($request->only('kreasi','photo'));
+        $creations = $creations->fresh();
 
-              $creations['photo'][] = $dataPhoto;
-          }
-      }
+        return response()->json($creations);
+    }
 
-        return response()->json($creations);  
-   }
-
-   public function destroy($username, $creation_id)
-   {
-        \DB::table('creations')->where('creation_id',$creation_id)->delete();
+    public function destroy($username, $creation_id)
+    {
+        Creation::find($creation_id)->delete();
 
         return response()->json(['success']);
-   }
+    }
 }

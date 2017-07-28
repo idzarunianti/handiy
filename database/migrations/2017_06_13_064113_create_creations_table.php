@@ -17,6 +17,7 @@ class CreateCreationsTable extends Migration
             $table->increments('creation_id');
             $table->string('kreasi');
             $table->string('username');
+            $table->string('photo');
             $table->integer('tutorial_id')->unsigned();
             $table->timestamps();
 
