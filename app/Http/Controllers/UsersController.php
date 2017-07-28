@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -17,55 +18,53 @@ class UsersController extends Controller
         //
     }
 
-    public function store(Request $request){
-        $this->validate($request,[
-            'username'=>'required|max:25',
-            'email'=>'required|max:255',
-            'name'=>'required|max:100'
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'username' => 'required|max:25',
+            'email' => 'required|max:255',
+            'name' => 'required|max:100'
         ]);
 
         $email = $request->get('email');
-        $users = [
-            'username'=>$request->get('username'),
-            'email'=>$request->get('email'),
-            'name'=>$request->get('name'),
-            'created_at'=>Carbon::now(),
-            'updated_at'=>Carbon::now(),
-        ];
+        $user = User::where('email', $email)->first();
+        if ($user == null) {
+            $users = [
+                'username' => $request->get('username'),
+                'email' => $request->get('email'),
+                'name' => $request->get('name'),
+            ];
+            $user = User::create($users);
         }
-        
 
-        \DB::table('users')->insert($users);
+        return response()->json($user);
+    }
+
+    public function index()
+    {
+        $users = User::paginate(10);
 
         return response()->json($users);
     }
 
-    public function index()
-   {
-        $users = \DB::table('users')->paginate(10);
-
-        return response()->json($users);
-   }
-
-   public function update(Request $request, $username)
-   {
-        $this->validate($request,[
-            'password'=>'max:255',
-            'name'=>'max:100',
+    public function update(Request $request, $username)
+    {
+        $this->validate($request, [
+            'name' => 'max:100',
         ]);
-        $users = $request->all();
-        $users['updated_at'] = Carbon::now();
-        
-        \DB::table('users')->where('username',$username)->update($users);
 
-        return response()->json($users);  
-   }
+        User::find($username)->update($request->only('name'));
 
-   public function destroy($username)
-   {
-        \DB::table('users')->where('username',$username)->delete();
+        $user = User::find($username);
+
+        return response()->json($user);
+    }
+
+    public function destroy($username)
+    {
+        User::find($username)->delete();
 
         return response()->json(['success']);
-   }
+    }
 
 }

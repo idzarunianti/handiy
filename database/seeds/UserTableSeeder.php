@@ -11,11 +11,9 @@ class UserTableSeeder extends Seeder
      */
     public function run()
     {
-        $faker = Faker\Factory::create('id_ID');
-        \DB::table('users')->insert([
+        \App\User::create([
             'name' => 'Idza Runianti',
             'username' => 'idzarunianti',
-            'password' => \Illuminate\Support\Facades\Crypt::encrypt('test'),
         ]);
     }
 }

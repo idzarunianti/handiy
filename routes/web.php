@@ -17,14 +17,15 @@ $app->get('/', function () use ($app) {
 $app->get('data', function(){
 	return response()->json(['test']);
 });
-$app->post('tutorials','TutorialsController@store');
-$app->get('tutorials','TutorialsController@index');
-$app->put('tutorials/{id}','TutorialsController@update');
-$app->delete('tutorials/{id}','TutorialsController@destroy');
 $app->post('users','UsersController@store');
 $app->get('users','UsersController@index');
 $app->put('users/{username}','UsersController@update');
 $app->delete('users/{username}','UsersController@destroy');
+
+$app->post('tutorials','TutorialsController@store');
+$app->get('tutorials','TutorialsController@index');
+$app->put('tutorials/{id}','TutorialsController@update');
+$app->delete('tutorials/{id}','TutorialsController@destroy');
 $app->post('categories','CategoryController@store');
 $app->get('categories','CategoryController@index');
 $app->put('categories/{category_id}','CategoryController@update');
