@@ -38,8 +38,8 @@ $app->put('photo_tutorials/{photo_tutorial_id}', 'PhotoTutorialsController@updat
 $app->group(['prefix' => '{username}'], function () use ($app) {
     $app->post('bookmarks', 'BookmarkController@store');
     $app->get('bookmarks', 'BookmarkController@index');
-    $app->put('bookmarks/{bookmarks_id}', 'BookmarkController@update');
     $app->delete('bookmarks/{bookmarks_id}', 'BookmarkController@destroy');
+
     $app->post('creations', 'CreationController@store');
     $app->get('creations', 'CreationController@index');
     $app->put('creations/{creation_id}', 'CreationController@update');

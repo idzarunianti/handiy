@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Bookmark;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class BookmarkController extends Controller
 {
@@ -17,49 +18,32 @@ class BookmarkController extends Controller
         //
     }
 
-    public function store(Request $request, $username){
-        $this->validate($request,[
-            'tutorials_id'=>'required',
-            'username'=>'required',
+    public function store(Request $request, $username)
+    {
+        $this->validate($request, [
+            'tutorials_id' => 'required',
         ]);
         $bookmarks = [
-            'tutorials_id'=>$request->get('tutorials_id'),
-            'username'=>$request->get('username'),
-            'created_at'=>Carbon::now(),
-            'updated_at'=>Carbon::now(),
+            'tutorials_id' => $request->get('tutorials_id'),
+            'username' => $username,
         ];
 
-        $bookmarks_id = \DB::table('bookmarks')->insertGetId($bookmarks);
-        $bookmarks['bookmarks_id'] = $bookmarks_id;
+        $bookmarks = Bookmark::create($bookmarks);
 
         return response()->json($bookmarks);
     }
 
     public function index($username)
-   {
-        $bookmarks = \DB::table('bookmarks')->paginate(10);
+    {
+        $bookmarks = Bookmark::where('username', $username)->with('tutorial')->paginate(10);
 
         return response()->json($bookmarks);
-   }
+    }
 
-   public function update(Request $request, $username, $bookmarks_id)
-   {
-        $this->validate($request,[
-            'tutorials_id'=>'required',
-            'username'=>'required',
-        ]);
-        $bookmarks = $request->all();
-        $bookmarks['updated_at'] = Carbon::now();
-        
-        \DB::table('bookmarks')->where('bookmarks_id',$bookmarks_id)->update($bookmarks);
-
-        return response()->json($bookmarks);  
-   }
-
-   public function destroy($username, $bookmarks_id)
-   {
-        \DB::table('bookmarks')->where('bookmarks_id',$bookmarks_id)->delete();
+    public function destroy($username, $bookmarks_id)
+    {
+        Bookmark::find($bookmarks_id)->delete();
 
         return response()->json(['success']);
-   }
+    }
 }
