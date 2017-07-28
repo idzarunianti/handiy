@@ -21,9 +21,11 @@ class CreationController extends Controller
         $this->validate($request,[
             'photo.*'=>'required|url',
             'username'=>'required',
+            'kreasi'=>'required',
             'tutorial_id'=>'required'
         ]);
         $creations = [
+            'kreasi'=>$request->get('kreasi'),
             'username'=>$request->get('username'),
             'tutorial_id'=>$request->get('tutorial_id'),
             'created_at'=>Carbon::now(),
@@ -64,6 +66,7 @@ class CreationController extends Controller
         $this->validate($request,[
             'username'=>'required',
             'tutorial_id'=>'required',
+            'kreasi'=>'required',
             'photo.*'=>'url'
         ]);
         $creations = $request->except('photo');

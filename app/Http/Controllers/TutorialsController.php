@@ -56,13 +56,13 @@ class TutorialsController extends Controller
 
    public function index(Request $request)
    {
-        $tutorial = \DB::table('tutorials');
+        $tutorial = \DB::table('tutorials')
+                        ->join('photo_tutorials', 'tutorials.id', '=', 'photo_tutorials.tutorial_id')
+                        ->get();
 
         if ($request->has('category_id')) {
           $tutorial = $tutorial->where('category_id', $request->get('category_id'));
         }
-
-        $tutorial = $tutorial->paginate(10);
 
         return response()->json($tutorial);
    }

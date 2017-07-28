@@ -20,16 +20,20 @@ class UsersController extends Controller
     public function store(Request $request){
         $this->validate($request,[
             'username'=>'required|max:25',
-            'password'=>'required|max:255',
+            'email'=>'required|max:255',
             'name'=>'required|max:100'
         ]);
+
+        $email = $request->get('email');
         $users = [
             'username'=>$request->get('username'),
-            'password'=>$request->get('password'),
+            'email'=>$request->get('email'),
             'name'=>$request->get('name'),
             'created_at'=>Carbon::now(),
             'updated_at'=>Carbon::now(),
         ];
+        }
+        
 
         \DB::table('users')->insert($users);
 
