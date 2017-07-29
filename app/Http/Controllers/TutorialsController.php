@@ -24,6 +24,7 @@ class TutorialsController extends Controller
         $this->validate($request, [
             'title' => 'required|max:255',
             'tutorial.*' => 'required|max:1000',
+            'thumbnail' => 'required|url',
             'photo.*' => 'url',
             'category_id' => 'required',
         ]);
@@ -31,6 +32,7 @@ class TutorialsController extends Controller
         $tutorial = Tutorial::create([
             'title' => $request->get('title'),
             'category_id' => $request->get('category_id'),
+            'thumbnail' => $request->get('thumbnail'),
         ]);
 
 
@@ -76,10 +78,11 @@ class TutorialsController extends Controller
     {
         $this->validate($request, [
             'title' => 'max:255',
+            'thumbnail' => 'url',
             'category_id' => 'required|exists:categories,category_id',
         ]);
         $tutorial = Tutorial::find($id);
-        $tutorial->update($request->only(['title', 'category_id']));
+        $tutorial->update($request->only(['title', 'category_id', 'thumbnail']));
         $tutorial = $tutorial->fresh();
 
         return response()->json($tutorial);

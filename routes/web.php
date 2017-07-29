@@ -46,3 +46,7 @@ $app->group(['prefix' => '{username}'], function () use ($app) {
     $app->put('creations/{creation_id}', 'CreationController@update');
     $app->delete('creations/{creation_id}', 'CreationController@destroy');
 });
+
+$app->group(['prefix => {tutorial_id}'], function () use ($app)){
+	$app->get('creations', 'CreationController@show');
+}
