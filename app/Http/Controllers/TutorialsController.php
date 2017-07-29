@@ -64,6 +64,14 @@ class TutorialsController extends Controller
         return response()->json($tutorials);
     }
 
+    public function show(Request $request, $id){
+        
+        $tutorial = Tutorial::find($id);
+        $tutorial->load('steps');
+
+        return response()->json($tutorial);
+    }
+
     public function update(Request $request, $id)
     {
         $this->validate($request, [

@@ -24,6 +24,7 @@ $app->delete('users/{username}', 'UsersController@destroy');
 
 $app->post('tutorial', 'TutorialsController@store');
 $app->get('tutorial', 'TutorialsController@index');
+$app->get('tutorial/{id}', 'TutorialsController@show');
 $app->put('tutorial/{id}', 'TutorialsController@update');
 $app->delete('tutorial/{id}', 'TutorialsController@destroy');
 
