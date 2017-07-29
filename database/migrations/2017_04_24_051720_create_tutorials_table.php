@@ -16,6 +16,7 @@ class CreateTutorialsTable extends Migration
         Schema::create('tutorials', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title');
+            $table->string('thumbnail');
             $table->integer('category_id')->unsigned();
             $table->timestamps();
 
