@@ -21,10 +21,10 @@ class BookmarkController extends Controller
     public function store(Request $request, $username)
     {
         $this->validate($request, [
-            'tutorials_id' => 'required',
+            'tutorial_id' => 'required',
         ]);
         $bookmarks = [
-            'tutorials_id' => $request->get('tutorials_id'),
+            'tutorial_id' => $request->get('tutorial_id'),
             'username' => $username,
         ];
 
