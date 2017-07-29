@@ -43,7 +43,7 @@ class CreationController extends Controller
         return response()->json($creations);
     }
 
-    public function index($tutorial_id)
+    public function show($tutorial_id)
     {
         $creations = Creation::with('tutorial.steps')->where('tutorial_id',$tutorial_id)->paginate(10);
 
