@@ -47,6 +47,6 @@ $app->group(['prefix' => '{username}'], function () use ($app) {
     $app->delete('creations/{creation_id}', 'CreationController@destroy');
 });
 
-$app->group(['prefix => {tutorial_id}'], function () use ($app)){
+$app->group(['prefix' => '{tutorial_id}'], function () use ($app)){
 	$app->get('creations', 'CreationController@show');
 }
