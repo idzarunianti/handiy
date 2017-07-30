@@ -36,7 +36,7 @@ $app->delete('categories/{category_id}', 'CategoryController@destroy');
 $app->get('photo_tutorials/{tutorial_id}', 'PhotoTutorialsController@index');
 $app->put('photo_tutorials/{photo_tutorial_id}', 'PhotoTutorialsController@update');
 
-$app->group(['prefix' => '{username}'], function () use ($app) {
+$app->group(['prefix' => 'username/{name:[A-Za-z]+}'], function () use ($app) {
     $app->post('bookmarks', 'BookmarkController@store');
     $app->get('bookmarks', 'BookmarkController@index');
     $app->delete('bookmarks/{bookmarks_id}', 'BookmarkController@destroy');
@@ -45,8 +45,8 @@ $app->group(['prefix' => '{username}'], function () use ($app) {
     $app->get('creations', 'CreationController@index');
     $app->put('creations/{creation_id}', 'CreationController@update');
     $app->delete('creations/{creation_id}', 'CreationController@destroy');
-})->where('username', '[A-Za-z]+');
+});
 
-$app->group(['prefix' => '{tutorial_id}'], function () use ($app) {
+$app->group(['prefix' => 'tutorial_id/{id:[0-9]+}'], function () use ($app) {
 	$app->get('creations', 'CreationController@show');
-})->where('tutorial_id', '[0-9]+');;
+});
